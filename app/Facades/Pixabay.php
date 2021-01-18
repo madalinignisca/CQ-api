@@ -2,7 +2,7 @@
 namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use App\Http\Services\PixabayService;
+use App\Services\PixabayService;
 
 class Pixabay extends Facade
 {
