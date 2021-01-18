@@ -6,6 +6,7 @@ use Carbon\CarbonInterval;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class PixabayService
 {
@@ -57,6 +58,11 @@ class PixabayService
    public function getExpirationDate()
    {
        return $this->expires_at;
+   }
+   public function expiresIn()
+   {
+      $cached_request = CachedRequest::whereCachedKey($this->caching_key_name)->first();
+      return   Carbon::parse($cached_request->expires_at)->diffForHumans(Carbon::parse(Carbon::now()));
    }
    private function saveCachingKey(string $key)
    {

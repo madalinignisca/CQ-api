@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PhotoCollection;
+use App\Http\Resources\Pixabay;
+use App\Http\Resources\PixabayCollection;
 use App\Jobs\ProcessPhotoResizing;
 use App\Jobs\ProcessPhotoStoring;
 use App\Jobs\ProcessPhotoStoringInDatabase;
@@ -13,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Boolean;
+use phpDocumentor\Reflection\Types\Collection;
+use function Psy\debug;
 
 class PixabayController extends Controller {
 
@@ -28,27 +33,42 @@ class PixabayController extends Controller {
               'category' => $request->queryParams['category'] ?? '',
             ];
         }
+        $decoded_response = collect(json_decode(\Pixabay::get($params)));
 
-       return response()->json(json_decode(\Pixabay::get($params)));
+
+        $wrapped_response = collect($decoded_response['hits'])->map(function ($value, $key) {
+           return new Pixabay($value);
+        });
+
+
+       return response()->json(
+           [
+               'data'=>$wrapped_response,
+               'expires_at' => \Pixabay::expiresIn()
+           ]
+           );
     }
 
     public function save(Request $request)
     {
-       ProcessPhotoStoring::dispatch((int)$request->image_id);
-
+        try {
+            ProcessPhotoStoring::dispatch((int)$request->image_id);
+        } catch ( \Exception $exception) {
+            return response()->json(['message' => $exception->getMessage(), 'success' => false]);
+        }
+        return response()->json(['message' => 'Your request is processing.', 'success' => true]);
     }
 
-    public function savePhoto()
+    public function saved()
     {
+        try {
+           return new PhotoCollection(Photo::all());
 
-
-        /**
-         * 0. create storage for photos, and for photos with smaller sizes
-         * 1. store photo in storage
-         * 2. make smaller version of it
-         * 3. save the photo in db
-         */
-
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage(), 'success' => false]);
+        }
     }
+
+
 
 }

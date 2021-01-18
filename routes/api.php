@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/photos', [\App\Http\Controllers\PixabayController::class, 'photos']);
 Route::post('/save', [\App\Http\Controllers\PixabayController::class, 'save']);
+Route::get('/saved', [\App\Http\Controllers\PixabayController::class, 'saved']);

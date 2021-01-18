@@ -32,7 +32,6 @@ class ProcessPhotoStoring implements ShouldQueue
     {
         $response = \Pixabay::get(['id' => (int)$this->image_id]);
         $cached_key_name = \Pixabay::getCachingKeyName();
-        $cache_expiration_date = \Pixabay::getExpirationDate();
 
         $photo_data = json_decode($response)->hits;
         $image_url = $photo_data[0]->largeImageURL;
@@ -40,7 +39,7 @@ class ProcessPhotoStoring implements ShouldQueue
         $extension = pathinfo($image_url)['extension'];
 
         ProcessPhotoStoringInStorage::withChain([
-            new ProcessPhotoStoringInDatabase($image_name, $cached_key_name, $cache_expiration_date),
+            new ProcessPhotoStoringInDatabase($image_name, $cached_key_name),
             new ProcessPhotoResizing($image_name, $extension)
         ])->dispatch($image_url, $image_name);
     }

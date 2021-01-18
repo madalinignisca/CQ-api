@@ -24,7 +24,7 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($image_name, $cached_key_name, $cache_expiration_date)
+    public function __construct($image_name, $cached_key_name)
     {
         $this->image_name = $image_name;
         $this->cached_key_name = $cached_key_name;
@@ -38,7 +38,7 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
     public function handle()
     {
         $date_now = Carbon::now()->toDateTimeString();
-        $photo =  Photo::create([
+        $photo =  Photo::firstOrCreate([
             'name' =>  $this->cached_key_name,
             'path' => $this->image_name,
             'updated_at' => $date_now,
