@@ -14,7 +14,7 @@ class UpdateCachedRequestsTable extends Migration
     public function up()
     {
         Schema::table('cached_requests', function (Blueprint $table) {
-            $table->addColumn('TIMESTAMP', 'expires_at');
+            $table->addColumn('TIMESTAMP', 'expires_at')->nullable();
         });
     }
 
