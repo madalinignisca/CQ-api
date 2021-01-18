@@ -226,6 +226,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Pixabay' => App\Facades\Pixabay::class,
+        'Image'   => App\Facades\Image::class,
 
     ],
 

@@ -13,6 +13,7 @@ class PixabayService
    private $api_url = null;
    private $params;
    private $ttl = 86400;
+   private  $caching_key_name;
 
    public function __construct()
    {
@@ -31,12 +32,12 @@ class PixabayService
    public function get(array $params = [])
    {
       $get_with_params = array_merge( $this->params, $params);
-      $caching_key_name = $this->generateCachingKeyFromParams($get_with_params);
+      $this->caching_key_name = $this->generateCachingKeyFromParams($get_with_params);
 
        try {
-           $this->saveCachingKey($caching_key_name);
+           $this->saveCachingKey($this->caching_key_name);
 
-           return Cache::remember($caching_key_name, $this->ttl, function () use($get_with_params) {
+           return Cache::remember($this->caching_key_name, $this->ttl, function () use($get_with_params) {
                $response = $this->client->get($this->api_url, [
                    'query' => $get_with_params
                ]);
@@ -46,6 +47,11 @@ class PixabayService
        } catch (\Exception $exception) {
            return $exception->getMessage();
        }
+   }
+
+   public function getCachingKeyName()
+   {
+       return $this->caching_key_name;
    }
 
    private function saveCachingKey(string $key)
