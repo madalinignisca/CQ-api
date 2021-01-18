@@ -2,12 +2,16 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessPhotoResizing;
+use App\Jobs\ProcessPhotoStoring;
 use App\Jobs\ProcessPhotoStoringInDatabase;
 use App\Jobs\ProcessPhotoStoringInStorage;
 use App\Photo;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Boolean;
 
 class PixabayController extends Controller {
@@ -30,16 +34,8 @@ class PixabayController extends Controller {
 
     public function save(Request $request)
     {
-       $image = \Pixabay::get(['id' => (int)$request->image_id]);
+       ProcessPhotoStoring::dispatch((int)$request->image_id);
 
-       ProcessPhotoStoringInStorage::withChain([
-           new ProcessPhotoStoringInDatabase,
-           new ProcessPhotoResizing
-       ])->dispatch();
-
-       return \Pixabay::getCachingKeyName();
-
-       return $image;
     }
 
     public function savePhoto()

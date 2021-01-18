@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessPhotoStoringInDatabase implements ShouldQueue
 {
@@ -17,9 +18,9 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($image_name, $cached_key_name, $cache_expiration_date)
     {
-        //
+
     }
 
     /**
@@ -29,6 +30,6 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
      */
     public function handle()
     {
-        //
+        \Log::debug('handling processing image storing in datanase');
     }
 }

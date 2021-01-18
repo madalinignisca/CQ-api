@@ -13,7 +13,8 @@ class PixabayService
    private $api_url = null;
    private $params;
    private $ttl = 86400;
-   private  $caching_key_name;
+   private $caching_key_name;
+   private $expires_at;
 
    public function __construct()
    {
@@ -53,14 +54,17 @@ class PixabayService
    {
        return $this->caching_key_name;
    }
-
+   public function getExpirationDate()
+   {
+       return $this->expires_at;
+   }
    private function saveCachingKey(string $key)
    {
-       $expires_at = Carbon::now()->addSeconds($this->ttl)->toDateTimeString();
+       $this->expires_at = Carbon::now()->addSeconds($this->ttl)->toDateTimeString();
 
        return CachedRequest::firstOrCreate( [ 'cached_key' => $key], [
            'cached_key' => $key,
-           'expires_at' => $expires_at
+           'expires_at' => $this->expires_at
        ]);
    }
    private function generateCachingKeyFromParams(array $params): string
