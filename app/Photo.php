@@ -15,7 +15,7 @@ class Photo extends Model
 
     public function sizes()
     {
-        return $this->hasMany(Size::class);
+        return $this->belongsToMany(Size::class);
     }
 
     public static function fetchALl()

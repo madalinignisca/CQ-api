@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Photo;
+use App\Size;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,6 +16,9 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $image_name;
+    private $cached_key_name;
+    private $cache_expiration_date;
     /**
      * Create a new job instance.
      *
@@ -20,7 +26,8 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
      */
     public function __construct($image_name, $cached_key_name, $cache_expiration_date)
     {
-
+        $this->image_name = $image_name;
+        $this->cached_key_name = $cached_key_name;
     }
 
     /**
@@ -30,6 +37,15 @@ class ProcessPhotoStoringInDatabase implements ShouldQueue
      */
     public function handle()
     {
-        \Log::debug('handling processing image storing in datanase');
+        $date_now = Carbon::now()->toDateTimeString();
+        $photo =  Photo::create([
+            'name' =>  $this->cached_key_name,
+            'path' => $this->image_name,
+            'updated_at' => $date_now,
+            'created_at' => $date_now,
+
+        ]);
+
+        $photo->sizes()->attach(Size::whereSize('large')->first());
     }
 }

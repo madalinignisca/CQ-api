@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePhotosSizesTable extends Migration
+class UpdatePhotoSizesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreatePhotosSizesTable extends Migration
      */
     public function up()
     {
-        Schema::create('photo_size', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->timestamps();
+        Schema::table('photo_size', function (Blueprint $table) {
+            $table->addColumn('Integer', 'photo_id');
+            $table->addColumn('Integer', 'size_id');
         });
     }
 
@@ -26,6 +26,6 @@ class CreatePhotosSizesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('photos_sizes');
+        //
     }
 }
