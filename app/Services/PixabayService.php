@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Services;
+namespace App\Services;
+
 use App\CachedRequest;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
